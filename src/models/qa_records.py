@@ -7,7 +7,7 @@ class QARecords(base):
     Id = Column(Integer, primary_key=True, index=True)
     UserId = Column(Integer, nullable=False)
     Question = Column(Text, nullable=False)
-    Answer = Column(Text, nullable=False)
+    Answer = Column(Text)
     Status = Column(Enum('Pending', 'Inprogress', 'Completed', 'Failed'))
     CreatedAt = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     UpdatedAt = Column(TIMESTAMP)

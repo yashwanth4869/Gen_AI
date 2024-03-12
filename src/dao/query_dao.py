@@ -15,14 +15,15 @@ class QueryDAO:
         self.db.add(record)
         self.db.commit()
         self.db.refresh(record)
+        return record.Id
         
     async def update_status(self, task_id, status):
-        record = self.db.query(QARecords).filter(QARecords.Id == task_id).fisrt()
+        record = self.db.query(QARecords).filter(QARecords.Id == task_id).first()
         record.Status = status
         record.UpdatedAt = func.now()
 
     async def update_answer_field(self, task_id, generated_response):
-        record = self.db.query(QARecords).filter(QARecords.Id == task_id).fisrt()
+        record = self.db.query(QARecords).filter(QARecords.Id == task_id).first()
         record.Answer = generated_response
         record.UpdatedAt = func.now()
 
