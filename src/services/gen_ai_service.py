@@ -9,6 +9,7 @@ from langchain.agents import initialize_agent, Tool
 from langchain.memory import ConversationBufferMemory
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
+from ..main import conversational_agent as con
 
 from dotenv import load_dotenv
 import os
@@ -76,7 +77,7 @@ class GenAiService:
         )
 
 
-        output=conversational_agent.run(input=user_query)
+        output=con.run(input=user_query)
 
         return output
        
