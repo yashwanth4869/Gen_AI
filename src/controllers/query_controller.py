@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from src.services.query_services import QueryService
+from src.services.query_service import QueryService
 
 class QueryController:
     def __init__(self, db : Session):
