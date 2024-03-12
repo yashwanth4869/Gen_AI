@@ -8,9 +8,7 @@ class QueryDAO:
     def __init__(self, db: Session):
         self.db = db        
 
-    async def fetch_query(self, request):
-        data = request.json()
-        return data.get('user',None)
+    
     
     async def add_record_to_db(self, user_id, query):
         record = map_query(user_id, query)

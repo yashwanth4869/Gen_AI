@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from src.dao.query_dao import QueryDAO
 from fastapi import HTTPException, Response
 from src.services.gen_ai_service import GenAiService
+from fastapi.responses import JSONResponse
 
 class QueryService:
     def __init__(self, db: Session):
@@ -17,4 +18,8 @@ class QueryService:
 
         self.query_dao.update_answer_field(task_id, generated_response)
         self.query_dao.update_status(task_id, 'Completed')
-        return Response(content = generated_response, media_type = 'text/plain')
+        return JSONResponse(content = generated_response)
+    
+    async def fetch_query(self, request):
+        data = request.json()
+        return data.get('user',None)
