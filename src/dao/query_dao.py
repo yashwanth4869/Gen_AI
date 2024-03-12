@@ -6,19 +6,7 @@ from sqlalchemy import func
 
 class QueryDAO:
     def __init__(self, db: Session):
-        self.db = db
-
-    async def get_response(self, user_id, request):
-        user_query = await self.fetch_query(request)
-        task_id = self.add_record_to_db(user_id, user_query)
-        self.update_status(task_id, 'Inprogress')
-
-        generated_response = self.generate_response(user_query)
-
-        self.update_answer_field(task_id, generated_response)
-        self.update_status(task_id, 'Completed')
-        return Response(content = generated_response, media_type = 'text/plain')
-        
+        self.db = db        
 
     async def fetch_query(self, request):
         data = request.json()
@@ -40,7 +28,6 @@ class QueryDAO:
         record.Answer = generated_response
         record.UpdatedAt = func.now()
 
-    async def generate_response(self, query):
-        pass
+    
     
 
