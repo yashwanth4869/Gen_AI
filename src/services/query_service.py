@@ -40,6 +40,9 @@ class QueryService:
         await self.query_dao.update_status(task_id, 'Completed')
         return JSONResponse(content=generated_response)
     
+    async def fetch_previous_chat(self, user_id):
+        return await self.query_dao.fetch_previous_chat(user_id)
+    
     async def fetch_query(self, request):
         data = await request.json()
         return data.get('user', None)

@@ -10,3 +10,7 @@ router = APIRouter()
 @router.post('/query/{user_id}')
 async def generate_answer(user_id, request : Request, db : Session = Depends(get_db)):
     return await QueryController(db).get_response(user_id, request)
+
+@router.get('/query/{user_id}')
+async def fetch_previous_chat(user_id, db : Session = Depends(get_db)):
+    return await QueryController(db).fetch_previous_chat(user_id)
