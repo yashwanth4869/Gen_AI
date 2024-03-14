@@ -34,9 +34,6 @@ class QueryDAO:
         previous_chat_questions = self.db.query(QARecords.Question).filter(QARecords.UserId == user_id).all()
         previous_chat_answers = self.db.query(QARecords.Answer).filter(QARecords.UserId == user_id).all()
         previous_chat = []
-        print('here **************************************************************')
-        print(str(previous_chat_answers[0]))
-        # print(type(previous_chat_answers[0]))
         for i in range(len(previous_chat_questions)):
             temp_dict = {}
             temp_dict['question'] = str(previous_chat_questions[i])
