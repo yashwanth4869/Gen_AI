@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
 from src.models.qa_records import QARecords
-from src.models.users import Users
-from src.mapper.query_mapper import map_query
 from fastapi import Response
 from sqlalchemy import func
 from fastapi.responses import JSONResponse
@@ -10,6 +8,14 @@ class UserDAO:
     def __init__(self, db:Session):
         self.db = db
 
-    async def fetch_user_memory(self,user_id):
-        user_model = self.db.query(Users.UserModel).filter(Users.Id == user_id).first()
-        return user_model
+    async def fetch_previous_chat(self, user_id):
+        previous_chat_questions = self.db.query(QARecords.Question).filter(QARecords.UserId == user_id).all()
+        previous_chat_answers = self.db.query(QARecords.Answer).filter(QARecords.UserId == user_id).all()
+        previous_chat = []
+        for i in range(len(previous_chat_questions)):
+            temp_dict = {}
+            temp_dict['question'] = str(previous_chat_questions[i])
+            temp_dict['answer'] = str(previous_chat_answers[i])
+            previous_chat.append(temp_dict)
+
+        return previous_chat
