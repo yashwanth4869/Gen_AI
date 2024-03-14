@@ -11,6 +11,12 @@ from langchain.memory import ConversationBufferMemory
 from langchain.agents import initialize_agent
 from langchain.agents.agent_types import AgentType
 from src.dao.user_dao import UserDAO
+from sqlalchemy import MetaData
+from langchain.sql_database import SQLDatabase
+from langchain_experimental.sql import SQLDatabaseChain
+from src.config.database import engine
+
+
 
 from dotenv import load_dotenv
 import os
@@ -19,6 +25,8 @@ class GenAiService:
         self.user_dao = UserDAO(db)
 
     async def generate_response(self, user_query, user_id):
+        
+
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
 
@@ -55,8 +63,18 @@ class GenAiService:
                 description="useful for when you need to answer questions about current events",
             )
         ]
+        db = SQLDatabase(engine)
+        sql_chain = SQLDatabaseChain(llm = llm, database=db, verbose=True)
 
+        metadat_obj = MetaData()
 
+        sql_tool = Tool(
+        name = 'RealEstate DB',
+        func = sql_chain.run,
+        description = "Useful when you need to answer the question about the RealEstate and its prices"
+        )
+
+        tools.append(sql_tool)
         # Load the "arxiv" tool
         arxiv_tool = load_tools(["arxiv"])
 
