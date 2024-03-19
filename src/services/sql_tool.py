@@ -26,7 +26,21 @@ class SQLCustomTool(BaseTool):
                     *State,
                     *ZipCode,
                     *HouseSize (represnts the size of the house),
-                    *Price (represnts cost of the house/property) "'''
+                    *Price (represnts cost of the house/property) 
+                    
+                    **There is also an employee table named as emp which is related with department table which is named as dept.
+                    **User can query words like boss, id, manager etc. The fields in the emp table are:
+                    *empno depicts employee id
+                    *ename depicts employee name
+                    *deptno is department
+                    *mgr is the id of the manager of the employee or their direct boss
+                    sal is their salary
+                    
+                    **The dept table is related with emp table and has the following columns:
+                    *deptno is id of the department
+                    *dname is the name of the department
+                    *loc is the location(city)
+                    "'''
 
     def _run(self,query:str):
         load_dotenv()

@@ -5,9 +5,10 @@ from sqlalchemy.orm import Session
 from src.config.database import base
 from src.models.qa_records import QARecords
 from src.models.realestate_data import RealEstate
+from src.models.employee import Emp,Dept
 
 
-models = [QARecords, RealEstate]
+models = [QARecords, RealEstate,Emp,Dept]
 
 base.metadata.create_all(bind=engine, tables=[model.__table__ for model in models])
 
