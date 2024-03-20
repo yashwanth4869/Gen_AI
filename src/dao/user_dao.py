@@ -9,10 +9,9 @@ class UserDAO:
     def __init__(self, db:Session):
         self.db = db
 
-    async def fetch_previous_chat(self, request):
+    async def fetch_previous_chat(self, session_id):
 
         response_dictionary = {}
-        session_id = await self.fetch_session_id(request)
         if not session_id:
             session_id = str(uuid.uuid4())
             response_dictionary['session_id'] = session_id
@@ -24,14 +23,28 @@ class UserDAO:
         previous_chat = []
         for i in range(len(previous_chat_questions)):
             temp_dict = {}
-            temp_dict['question'] = str(previous_chat_questions[i])
-            temp_dict['answer'] = str(previous_chat_answers[i])
+            temp_dict['question'] = str(previous_chat_questions[i][0])
+            temp_dict['answer'] = str(previous_chat_answers[i][0])
             previous_chat.append(temp_dict)
         response_dictionary['session_id'] = session_id
         response_dictionary['previous_chat'] = previous_chat
-
-        return JSONResponse(content = response_dictionary)
+        print(response_dictionary)
+        return response_dictionary
     
-    async def fetch_session_id(self, request):
+
+    async def fetch_user_conversations(self, request):
+        user_id = await self.fetch_field(request, 'user_id')
+        sessions = self.db.query(QARecords.SessionId).filter(QARecords.UserId == user_id).all()
+        user_conversations = {}
+
+        for session_id in sessions:
+            session_chat = await self.fetch_previous_chat(session_id[0])
+            user_conversations[session_id[0]] = session_chat
+        
+        return JSONResponse(content=user_conversations)
+
+
+
+    async def fetch_field(self, request, required_field):
         data = await request.json()
-        return data.get('session_id', None)
+        return data.get(required_field, None)
