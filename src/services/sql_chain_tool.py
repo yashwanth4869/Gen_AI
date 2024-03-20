@@ -37,7 +37,8 @@ class SQLCustomTool(BaseTool):
 
         prompt = ChatPromptTemplate.from_template(template=template)
         prompt.format(schema = "my schema",question = "how many users are there")
-        db_uri = "mysql+mysqlconnector://root:MANOsince%402003@localhost:3306/ClassicModels"
+        db_uri = os.getenv("SAMPLE_DB_URL")
+
         db = SQLDatabase.from_uri(db_uri)
 
         def get_schema(_):
@@ -76,41 +77,9 @@ class SQLCustomTool(BaseTool):
         )
         return full_chain.invoke({"question":f"{user_query}"})
 
-        # llm = OpenAI(
-        #     openai_api_key=api_key,
-        #     temperature=0
-        # )
-        # db = SQLDatabase(engine)
-        # agent = create_sql_agent(   
-        #     llm=llm,
-        #     toolkit=SQLDatabaseToolkit(db=db, llm=llm),
-        #     verbose=True,
-        #     agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        #     top_k=1000
-        #     )
-        # return agent.run(query)
+        
     
     def _arun(self,query:str):
         raise NotImplementedError("This tool does not support async :")
 
 
-# @tool
-# ""
-# def sql_custom_agent(query:str):
-
-#     load_dotenv()
-#     api_key=os.getenv("OPENAI_API_KEY")
-
-#     llm = OpenAI(
-#         openai_api_key=api_key,
-#         temperature=0
-#     )
-#     db = SQLDatabase(engine)
-#     agent = create_sql_agent(   
-#         llm=llm,
-#         toolkit=SQLDatabaseToolkit(db=db, llm=llm),
-#         verbose=True,
-#         agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-#         top_k=1000
-#         )
-#     return agent.run(query)
