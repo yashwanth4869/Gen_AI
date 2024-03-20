@@ -9,9 +9,10 @@ class UserDAO:
     def __init__(self, db:Session):
         self.db = db
 
-    async def fetch_previous_chat(self, session_id):
+    async def fetch_previous_chat(self, request):
 
         response_dictionary = {}
+        session_id = await self.fetch_session_id(request)
         if not session_id:
             session_id = str(uuid.uuid4())
             response_dictionary['session_id'] = session_id
@@ -29,4 +30,8 @@ class UserDAO:
         response_dictionary['session_id'] = session_id
         response_dictionary['previous_chat'] = previous_chat
 
-        return json.dumps(response_dictionary)
+        return JSONResponse(content = response_dictionary)
+    
+    async def fetch_session_id(self, request):
+        data = await request.json()
+        return data.get('session_id', None)
