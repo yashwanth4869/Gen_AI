@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.chains import LLMMathChain
-from langchain.tools import DuckDuckGoSearchRun
 from langchain import hub
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent, Tool
@@ -19,7 +18,8 @@ from langchain import PromptTemplate
 from langchain_community.agent_toolkits import create_sql_agent
 from src.config.database_initializer import get_db
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
-from src.services.sql_tool import SQLCustomTool
+# from src.services.sql_tool import SQLCustomTool
+from src.services.sql_chain_tool import SQLCustomTool
 
 
 from dotenv import load_dotenv
@@ -54,7 +54,7 @@ class GenAiService:
 
         llm_math = LLMMathChain(llm=llm)
 
-        search = DuckDuckGoSearchRun()
+        # search = DuckDuckGoSearchRun()
 
         # db = SQLDatabase(engine)
         # db = get_db()
@@ -72,11 +72,6 @@ class GenAiService:
                 name='Calculator',
                 func=llm_math.run,
                 description='Useful for when you need to answer questions about math.'
-            ),
-            Tool(
-                name="Search",
-                func=search.run,
-                description="useful for when you need to answer questions about current events",
             )
         ]
 
