@@ -6,7 +6,7 @@ class QARecords(base):
     __tablename__ = "qa_records"
     Id = Column(Integer, primary_key=True, index=True)
     UserId = Column(Integer, nullable=False)
-    SessionId = Column(String)
+    SessionId = Column(Text)
     Question = Column(Text, nullable=False)
     Answer = Column(Text)
     Status = Column(Enum('Pending', 'Inprogress', 'Completed', 'Failed'))
