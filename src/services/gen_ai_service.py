@@ -20,18 +20,14 @@ from langchain_community.agent_toolkits import create_sql_agent
 from src.config.database_initializer import get_db
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from src.services.sql_tool import SQLCustomTool
-
-
+from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
 import os
 class GenAiService:
     def __init__(self, db: Session):
-
         self.user_dao = UserDAO(db)
 
-    async def generate_response(self, user_query, user_id):
-        
-
+    async def generate_response(self, user_query, user_id, session_id):
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
 
@@ -45,6 +41,17 @@ class GenAiService:
             template="{query}"
         )
 
+        history = UpstashRedisChatMessageHistory(
+            url = os.getenv("REDIS_URL"),
+            token = os.getenv("REDIS_TOKEN"),
+            session_id = session_id,
+        )
+
+        memory = ConversationBufferMemory(
+            memory_key = "chat_history",
+            return_messages = True,
+            chat_memory = history
+        )
         prompt = hub.pull("hwchase17/react")
 
         # prompt_template = """Use the following as it is:"{text}"DO NOT SUMMARIZE:"""

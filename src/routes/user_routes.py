@@ -8,5 +8,5 @@ from fastapi.responses import JSONResponse
 router = APIRouter()
 
 @router.get('/queries/user/{user_id}')
-async def fetch_previous_chat(user_id, db : Session = Depends(get_db)):
-    return await UserController(db).fetch_previous_chat(user_id)
+async def fetch_previous_chat(session_id, db : Session = Depends(get_db)):
+    return await UserController(db).fetch_previous_chat(session_id)
