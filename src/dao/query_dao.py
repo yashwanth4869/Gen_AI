@@ -9,8 +9,8 @@ class QueryDAO:
     def __init__(self, db: Session):
         self.db = db        
     
-    async def add_record_to_db(self, user_id, query):
-        record = map_query(user_id, query)
+    async def add_record_to_db(self, user_id, query, session_id):
+        record = map_query(user_id, query, session_id)
         self.db.add(record)
         self.db.commit()
         self.db.refresh(record)
