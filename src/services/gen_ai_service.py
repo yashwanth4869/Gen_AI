@@ -8,13 +8,13 @@ from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.agent_types import AgentType
 from src.dao.user_dao import UserDAO
-from src.config.database import engine
 from langchain import PromptTemplate
 from src.services.sql_tool import SQLCustomTool
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
 import os
 from sqlalchemy.orm import Session
+
 class GenAiService:
     def __init__(self, db: Session):
         self.user_dao = UserDAO(db)
@@ -44,15 +44,9 @@ class GenAiService:
             return_messages = True,
             chat_memory = history
         )
-        # prompt = hub.pull("hwchase17/react")
-
-        # prompt_template = """Use the following as it is:"{text}"DO NOT SUMMARIZE:"""
-        # PROMPT = PromptTemplate(template=prompt_template, input_variables=["text"])
 
         llm_chain = LLMChain(llm=llm, prompt=chain_prompt)
-
         llm_math = LLMMathChain(llm=llm)
-
         search = DuckDuckGoSearchRun()
 
         tools=[
@@ -99,6 +93,5 @@ class GenAiService:
 
 
         output=conversational_agent.run(input=user_query)
-
         return output
        
