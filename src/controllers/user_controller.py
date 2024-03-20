@@ -8,3 +8,6 @@ class UserController:
     
     async def fetch_previous_chat(self, request):
         return await self.user_service.fetch_previous_chat(request)
+    
+    async def fetch_user_conversations(self,request):
+        return await self.user_service.fetch_user_conversations(request)
