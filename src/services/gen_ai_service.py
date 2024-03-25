@@ -3,12 +3,15 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.chains import LLMMathChain
 from langchain.tools import DuckDuckGoSearchRun
+from langchain_community.document_loaders.csv_loader import CSVLoader
+from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain import hub
 from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.agent_types import AgentType
 from src.dao.user_dao import UserDAO
 from src.services.sql_chain_tool import SQLCustomTool
+from src.services.csv_tool import CSVCustomTool
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
 import os
@@ -68,6 +71,10 @@ class GenAiService:
 
         sql_tool = SQLCustomTool()
         tools.append(sql_tool)
+
+        csv_tool=CSVCustomTool()
+        tools.append(csv_tool)
+
         # Load the "arxiv" tool
         arxiv_tool = load_tools(["arxiv"])
 
@@ -77,7 +84,7 @@ class GenAiService:
 
         prompt = hub.pull("hwchase17/openai-functions-agent")
 
-        memory = ConversationBufferMemory(memory_key="chat_history")
+        # memory = ConversationBufferMemory(memory_key="chat_history")
 
 
         conversational_agent = initialize_agent(
