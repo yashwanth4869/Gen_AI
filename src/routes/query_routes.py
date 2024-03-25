@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
-@router.post('/query/{user_id}')
-async def generate_response(user_id, request : Request, db : Session = Depends(get_db)):
-    return await QueryController(db).generate_response(user_id, request)
+@router.post('/query')
+async def generate_response(request : Request, db : Session = Depends(get_db)):
+    return await QueryController(db).generate_response(request)
 

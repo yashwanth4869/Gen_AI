@@ -10,9 +10,10 @@ class QueryService:
         self.query_dao = QueryDAO(db)
         self.gen_ai = GenAiService(db)
     
-    async def generate_response(self, user_id, request):
+    async def generate_response(self, request):
         user_query = await self.fetch_query(request)
         session_id = await self.fetch_session_id(request)
+        user_id = await self.fetch_user_id(request)
         task_id = await self.query_dao.add_record_to_db(user_id, user_query, session_id)
         await self.query_dao.update_status(task_id, 'Inprogress')
 
@@ -29,3 +30,7 @@ class QueryService:
     async def fetch_session_id(self, request):
         data = await request.json()
         return data.get('session_id', None)
+
+    async def fetch_user_id(self, request):
+        data = await request.json()
+        return data.get('user_id', None)
