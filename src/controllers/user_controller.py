@@ -6,8 +6,8 @@ class UserController:
     def __init__(self, db : Session):
         self.user_service = UserService(db)
     
-    async def fetch_previous_chat(self, request):
-        return await self.user_service.fetch_previous_chat(request)
+    async def fetch_session_chat(self, request):
+        return await self.user_service.fetch_session_chat(request)
     
     async def fetch_user_conversations(self,request):
         return await self.user_service.fetch_user_conversations(request)

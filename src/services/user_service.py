@@ -7,9 +7,9 @@ class UserService:
     def __init__(self, db: Session):
         self.user_dao = UserDAO(db)
 
-    async def fetch_previous_chat(self, request):
+    async def fetch_session_chat(self, request):
         session_id = await self.fetch_session_id(request)
-        response_dictionary = await self.user_dao.fetch_previous_chat(session_id)
+        response_dictionary = await self.user_dao.fetch_session_chat(session_id)
         return JSONResponse(content = response_dictionary)
     
     async def fetch_user_conversations(self,request):
