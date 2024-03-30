@@ -24,7 +24,7 @@ class GenAiService:
     async def generate_response(self, user_query, user_id, session_id):
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-
+        user_query = user_query + "dont tell me is there anything else you would like to know. Give me the final answer"
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -74,6 +74,9 @@ class GenAiService:
 
         csv_tool=CSVCustomTool()
         tools.append(csv_tool)
+
+        # rag_tool = RagCustomTool()
+        # tools.append(rag_tool)
 
         # Load the "arxiv" tool
         arxiv_tool = load_tools(["arxiv"])
