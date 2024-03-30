@@ -39,7 +39,6 @@ class RagCustomTool(BaseTool):
         self.data = self.text_splitter.split_documents(self.pages)
         self.db = FAISS.from_documents(self.data, self.embed)
         self.llm = ChatOpenAI(
-            openai_api_key="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",
             model_name='gpt-3.5-turbo',
             temperature=0.0
         )
@@ -58,6 +57,5 @@ class RagCustomTool(BaseTool):
         return len(tokens)
  
     def _run(self, user_query: str):
-        new_db = FAISS.load_local("faiss_index", embeddings)
         output = self.qa.run(user_query)
         return output

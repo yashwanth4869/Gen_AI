@@ -65,12 +65,11 @@ class RagService:
         data = text_splitter.split_documents(pages)
         db = FAISS.from_documents(data, self.embed)
         # llm = ChatOpenAI(
-        #     openai_api_key="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",
         #     model_name='gpt-3.5-turbo',
         #     temperature=0.0
         # )
         retriever = db.as_retriever()
-        
+
         db.save_local("faiss_index")
 
         qa = RetrievalQA.from_chain_type(
@@ -136,7 +135,6 @@ class RagService:
 
         prompt = hub.pull("hwchase17/openai-functions-agent")
 
-        # memory = ConversationBufferMemory(memory_key="chat_history")
 
 
         conversational_agent = initialize_agent(
