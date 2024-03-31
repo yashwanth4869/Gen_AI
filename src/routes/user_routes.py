@@ -34,11 +34,9 @@ async def fetch_user_conversation(request : Request,user_id:int,session_id, db :
 @router.post("/upload/")        
 async def upload_file(file: UploadFile = File(...)):
     try:
-        # Check if a file was uploaded
         if not file:
             raise HTTPException(status_code=400, detail="No file uploaded")
         
-        # Save the uploaded file
         file_name = pathlib.Path(uploads_dir, file.filename)
         async with aiofiles.open(file_name, 'wb') as f:
             contents = await file.read()  # Read the file contents
