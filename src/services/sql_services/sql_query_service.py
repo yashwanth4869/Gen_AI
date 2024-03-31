@@ -2,9 +2,6 @@ from langchain import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.chains import LLMMathChain
-from langchain.tools import DuckDuckGoSearchRun
-from langchain_community.document_loaders.csv_loader import CSVLoader
-from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain import hub
 from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
@@ -17,11 +14,15 @@ from dotenv import load_dotenv
 import os
 from sqlalchemy.orm import Session
 
-class GenAiService:
+class SQLQueryService:
     def __init__(self, db: Session):
         self.user_dao = UserDAO(db)
 
-    async def generate_response(self, user_query, user_id, session_id):
+    async def generate_sql_query_response(self, request, user_id, session_id):
+
+        data = await request.json()
+        user_query = data.get('user', None)
+        
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
         user_query = user_query + "dont tell me is there anything else you would like to know. Give me the final answer"
@@ -49,7 +50,6 @@ class GenAiService:
 
         llm_chain = LLMChain(llm=llm, prompt=chain_prompt)
         llm_math = LLMMathChain(llm=llm)
-        search = DuckDuckGoSearchRun()
 
         tools=[
             Tool(
@@ -62,15 +62,10 @@ class GenAiService:
                 func=llm_math.run,
                 description='Useful for when you need to answer questions about math.'
             ),
-            Tool(
-                name="Search",
-                func=search.run,
-                description="useful for when you need to answer questions about current events",
-            )
         ]
 
-        # sql_tool = SQLCustomTool()
-        # tools.append(sql_tool)
+        sql_tool = SQLCustomTool()
+        tools.append(sql_tool)
 
         csv_tool=CSVCustomTool()
         tools.append(csv_tool)
