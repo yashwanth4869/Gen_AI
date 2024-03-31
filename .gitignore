@@ -1,8 +1,7 @@
 .env
+uploads/*
 *.pyc
-/myenv/*
+myenv/
 __pycache__/
-/myenv/file_to_ignore.txt
 .DS_Store
-/path/to/directory/*
-/FAISS_DB/*
+FAISS_DB/
