@@ -4,8 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import os
 from dotenv import load_dotenv
 load_dotenv()
-URL_DATABASE = "mysql+pymysql://root:MANOsince%402003@localhost:3306/genai_v3"
-print(URL_DATABASE)
+URL_DATABASE = os.getenv("DATABASE_URL")
 
 engine = create_engine(URL_DATABASE)
 
