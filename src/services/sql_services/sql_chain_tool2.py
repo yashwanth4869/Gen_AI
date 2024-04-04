@@ -12,14 +12,14 @@ from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI
-from src.utlis.constants import description1 as desc1
+from src.utlis.constants import description2 as desc2
 import os
 
 
 
 class SQLCustomTool(BaseTool):
-    name = "SQL rev rec querying tool"
-    description = desc1
+    name = "SQL classicmodels querying tool"
+    description = desc2
 
     def _run(self,user_query:str):
         load_dotenv()
@@ -37,7 +37,7 @@ class SQLCustomTool(BaseTool):
 
         prompt = ChatPromptTemplate.from_template(template=template)
         prompt.format(schema = "my schema",question = "how many users are there")
-        db_uri = os.getenv("SAMPLE_DB_URL1")
+        db_uri = os.getenv("SAMPLE_DB_URL2")
 
         db = SQLDatabase.from_uri(db_uri)
 

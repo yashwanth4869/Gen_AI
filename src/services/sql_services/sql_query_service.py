@@ -13,6 +13,7 @@ from langchain_community.chat_message_histories.upstash_redis import UpstashRedi
 from dotenv import load_dotenv
 import os
 from sqlalchemy.orm import Session
+import uuid
 
 class SQLQueryService:
     def __init__(self, db: Session):
@@ -22,10 +23,14 @@ class SQLQueryService:
 
         data = await request.json()
         user_query = data.get('user', None)
+        # data_base = data.get('db_id',1)
+
+        if session_id == 'undefined':
+            session_id=str(uuid.uuid4())
         
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-        user_query = user_query + "dont tell me is there anything else you would like to know. Give me the final answer"
+        user_query = user_query + " from the given database. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -97,5 +102,5 @@ class SQLQueryService:
 
 
         output=conversational_agent.run(input=user_query)
-        return output
+        return {'bot': output, 'session_id':session_id}
        

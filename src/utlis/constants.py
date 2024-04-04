@@ -1,5 +1,5 @@
 
-description = """
+description1 = """
         The `osi_rev_rec_tabx` table is designed to store revenue recognition data related to projects, employees, invoices, and various financial metrics of OSI_DIGITAL company . Let's break down the table schema and the sample data insertion to provide a detailed description:
 
 ### Table Schema:
@@ -45,6 +45,16 @@ The sample data insertion consists of records related to both "Invoice Details" 
 ### Overall Description:
 
 The `osi_rev_rec_tabx` table serves as a comprehensive repository for tracking revenue recognition and financial metrics related to projects, employees, and invoices. It facilitates detailed analysis and reporting on various aspects of project management, billing, and financial performance. The table's design and structure enable efficient data storage, retrieval, and analysis for stakeholders involved in project management and financial oversight.
+                
+                
+                
+
+"""
+
+
+
+description2 = """
+        This database is a classic models database which consists of - customers, employees, offices, orderdetails, orders, payments, productlines, products.
                 
                 
                 

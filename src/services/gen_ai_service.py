@@ -24,7 +24,7 @@ class GenAiService:
     async def generate_response(self, user_query, user_id, session_id):
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-        user_query = user_query + "dont tell me is there anything else you would like to know. Give me the final answer"
+        user_query = user_query + ". Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?, etc'. *If 'hi', 'hello', etc are given then greet back."
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -72,17 +72,17 @@ class GenAiService:
         # sql_tool = SQLCustomTool()
         # tools.append(sql_tool)
 
-        csv_tool=CSVCustomTool()
-        tools.append(csv_tool)
+        # csv_tool=CSVCustomTool()
+        # tools.append(csv_tool)
 
         # rag_tool = RagCustomTool()
         # tools.append(rag_tool)
 
         # Load the "arxiv" tool
-        arxiv_tool = load_tools(["arxiv"])
+        # arxiv_tool = load_tools(["arxiv"])
 
-        # Add the loaded tool to your existing list
-        tools.extend(arxiv_tool)
+        # # Add the loaded tool to your existing list
+        # tools.extend(arxiv_tool)
 
 
         prompt = hub.pull("hwchase17/openai-functions-agent")
@@ -102,5 +102,5 @@ class GenAiService:
 
 
         output=conversational_agent.run(input=user_query)
-        return output
+        return {'bot': output, 'session_id':session_id}
        
