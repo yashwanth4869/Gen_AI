@@ -61,7 +61,7 @@ class RagService:
             )
         ]
 
-        qa = await rag_db(filename)
+        qa = await rag_db(filename, session_id)
         rag_tool = RagCustomTool()
         rag_tool.qa = qa
         tools.append(rag_tool)
