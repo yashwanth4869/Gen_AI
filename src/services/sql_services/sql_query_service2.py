@@ -30,7 +30,7 @@ class SQLQueryService2:
         
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-        user_query = user_query + " from the given classicmodels database. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
+        user_query = user_query + " from the given real estate database. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -73,17 +73,17 @@ class SQLQueryService2:
         
         tools.append(sql_tool)
 
-        csv_tool=CSVCustomTool()
-        tools.append(csv_tool)
+        # csv_tool=CSVCustomTool()
+        # tools.append(csv_tool)
 
         # rag_tool = RagCustomTool()
         # tools.append(rag_tool)
 
-        # Load the "arxiv" tool
-        arxiv_tool = load_tools(["arxiv"])
+        # # Load the "arxiv" tool
+        # arxiv_tool = load_tools(["arxiv"])
 
-        # Add the loaded tool to your existing list
-        tools.extend(arxiv_tool)
+        # # Add the loaded tool to your existing list
+        # tools.extend(arxiv_tool)
 
 
         prompt = hub.pull("hwchase17/openai-functions-agent")

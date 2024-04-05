@@ -25,7 +25,12 @@ class SQLQueryService:
         user_query = data.get('user', None)
         # data_base = data.get('db_id',1)
 
-        if session_id == 'undefined':
+        # response = "undefined297ba627-ebfc-4284-acdc-60d1be4eb1b9"
+
+        if session_id.startswith("undefined"):
+            session_id = session_id[len("undefined"):]
+
+        if len(session_id)==0:
             session_id=str(uuid.uuid4())
         
         load_dotenv()

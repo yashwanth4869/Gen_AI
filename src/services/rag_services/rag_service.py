@@ -22,7 +22,7 @@ class RagService:
         if session_id == 'undefined':
             session_id=str(uuid.uuid4())
         print(user_query)
-        user_query = user_query + " from the uploaded document. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your observation"
+        user_query = user_query + " from the uploaded document. Strictly dont tell me anything like- 'Is there anything else you would like to know?'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
