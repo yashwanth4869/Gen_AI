@@ -12,6 +12,7 @@ from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 import os
 from dotenv import load_dotenv
+from langchain import OpenAI
 # import pathlib
 # import aiofiles
 from src.services.rag_services.token_len import tiktoken_len
@@ -34,6 +35,7 @@ async def rag_db(filename):
             model='text-embedding-ada-002',
             openai_api_key=api_key
         )
+        
     if not os.path.exists(db_filename):
         
         loader = PyPDFLoader(f"uploads/{filename}")
@@ -42,7 +44,7 @@ async def rag_db(filename):
         
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=400,
-            chunk_overlap=20,
+            chunk_overlap=100,
             length_function = tiktoken_len,
             separators=["\n\n", "\n", " ", ""]
         )
@@ -53,7 +55,6 @@ async def rag_db(filename):
         
         db.save_local(db_filename)
     else:
-        print("Here in the else statement")
         db = FAISS.load_local(db_filename,embed, allow_dangerous_deserialization=True)
         retriever = db.as_retriever()
 
@@ -64,3 +65,5 @@ async def rag_db(filename):
     )
     
     return qa
+
+

@@ -7,7 +7,7 @@ from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.agent_types import AgentType
 from src.dao.user_dao import UserDAO
-from src.services.sql_services.sql_chain_tool import SQLCustomTool
+from src.services.sql_services.sql_chain_tool2 import SQLCustomTool
 from src.services.csv_tool import CSVCustomTool
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ import os
 from sqlalchemy.orm import Session
 import uuid
 
-class SQLQueryService:
+class SQLQueryService2:
     def __init__(self, db: Session):
         self.user_dao = UserDAO(db)
 
@@ -25,17 +25,12 @@ class SQLQueryService:
         user_query = data.get('user', None)
         # data_base = data.get('db_id',1)
 
-        # response = "undefined297ba627-ebfc-4284-acdc-60d1be4eb1b9"
-
-        if session_id.startswith("undefined"):
-            session_id = session_id[len("undefined"):]
-
-        if len(session_id)==0:
+        if session_id == 'undefined':
             session_id=str(uuid.uuid4())
         
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-        user_query = user_query + " from the given database. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
+        user_query = user_query + " from the given real estate database. Strictly dont tell me anything like- 'Is there anything else you would like to know'. I strictly want you to Give me the final answer which is present in your 'observation'. *Strictly Give me the final result. I dont want you to tell 'Is there anything else I can assist you with?'"
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -75,19 +70,20 @@ class SQLQueryService:
         ]
 
         sql_tool = SQLCustomTool()
+        
         tools.append(sql_tool)
 
-        csv_tool=CSVCustomTool()
-        tools.append(csv_tool)
+        # csv_tool=CSVCustomTool()
+        # tools.append(csv_tool)
 
         # rag_tool = RagCustomTool()
         # tools.append(rag_tool)
 
-        # Load the "arxiv" tool
-        arxiv_tool = load_tools(["arxiv"])
+        # # Load the "arxiv" tool
+        # arxiv_tool = load_tools(["arxiv"])
 
-        # Add the loaded tool to your existing list
-        tools.extend(arxiv_tool)
+        # # Add the loaded tool to your existing list
+        # tools.extend(arxiv_tool)
 
 
         prompt = hub.pull("hwchase17/openai-functions-agent")
