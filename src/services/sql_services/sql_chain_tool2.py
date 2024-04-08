@@ -18,7 +18,7 @@ import os
 
 
 class SQLCustomTool(BaseTool):
-    name = "SQL classicmodels querying tool"
+    name = "SQL real estate querying tool"
     description = desc2
 
     def _run(self,user_query:str):
