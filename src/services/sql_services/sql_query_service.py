@@ -7,7 +7,7 @@ from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.agent_types import AgentType
 from src.dao.user_dao import UserDAO
-from src.services.sql_services.sql_chain_tool import SQLCustomTool
+from src.services.sql_services.sql_chain import SQLService
 from src.services.csv_tool import CSVCustomTool
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
@@ -25,7 +25,7 @@ class SQLQueryService:
         
         load_dotenv()
         api_key=os.getenv("OPENAI_API_KEY")
-        user_query = user_query + "dont tell me is there anything else you would like to know. Give me the final answer"
+        # user_query = user_query
         llm = OpenAI(
             openai_api_key=api_key,
             temperature=0
@@ -70,19 +70,14 @@ class SQLQueryService:
         csv_tool=CSVCustomTool()
         tools.append(csv_tool)
 
-        # rag_tool = RagCustomTool()
-        # tools.append(rag_tool)
 
-        # Load the "arxiv" tool
         arxiv_tool = load_tools(["arxiv"])
 
-        # Add the loaded tool to your existing list
         tools.extend(arxiv_tool)
 
 
         prompt = hub.pull("hwchase17/openai-functions-agent")
 
-        # memory = ConversationBufferMemory(memory_key="chat_history")
 
 
         conversational_agent = initialize_agent(
