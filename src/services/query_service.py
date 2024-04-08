@@ -24,11 +24,11 @@ class QueryService:
         generated_response = await self.gen_ai.generate_response(user_query, user_id, session_id)
         response = await self.query_dao.fetch_session_chat(session_id)
         #  = previous_chat
-        print(response)
-        await self.query_dao.update_answer_field(task_id, generated_response)
+        # print(response)
+        await self.query_dao.update_answer_field(task_id, generated_response['bot'])
         await self.query_dao.update_status(task_id, 'Completed')
-        return {'bot':generated_response,'session_id':session_id}
-    
+        return generated_response
+        
     async def fetch_query(self, request):
         data = await request.json()
         return data.get('user', None)
