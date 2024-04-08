@@ -59,7 +59,7 @@ class SQLCustomTool(BaseTool):
             Question: {question}
             SQL Query: {query}
             SQL Response: {response}
-            """
+            """ 
 
         prompt = ChatPromptTemplate.from_template(template=template)
         
