@@ -8,16 +8,23 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 import os
-
+from langchain.memory import ChatMessageHistory
 from langchain import FewShotPromptTemplate
+from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder,FewShotChatMessagePromptTemplate,PromptTemplate
 
 
 class SQLService:
-    def __init__(self):
+    def __init__(self, session_id):
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY")
-        self.db = SQLDatabase.from_uri('mysql+pymysql://root:123@localhost:3306/osione_dev')
+        self.history = UpstashRedisChatMessageHistory(
+            url = os.getenv("REDIS_URL"),
+            token = os.getenv("REDIS_TOKEN"),
+            session_id = session_id,
+        )
+        self.uri_key = os.getenv("SAMPLE_DB_URL")
+        self.db = SQLDatabase.from_uri(self.uri_key)
         # print(self.db.table_info)
         self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, openai_api_key=self.api_key)
 
@@ -55,6 +62,7 @@ class SQLService:
             [
                 ("system", "You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run. Unless otherwise specificed.\n\nHere is the relevant table info: {table_info}\n\nBelow are a number of examples of questions and their corresponding SQL queries."),
                 self.few_shot_prompt,
+                MessagesPlaceholder(variable_name="messages"),
                 ("human", "{input}"),
             ]
         )
@@ -147,12 +155,15 @@ class SQLService:
 
         # print(self.few_shot_prompt_template.format(query=user_question))
 
-        print(self.final_prompt.format(input=user_question,table_info="some table info"))
+        # print(self.final_prompt.format(input=user_question,table_info="some table info"))
         chain = (
             RunnablePassthrough.assign(query= self.generate_query | self.remove_sql_identifier).assign(
                 result=itemgetter("query") | self.execute_query
             ) | self.rephrase_answer
         )
-        output = chain.invoke({"question": user_question})
+        output = chain.invoke({"question": user_question, "messages" : self.history.messages})
+        self.history.add_user_message(user_question)
+        self.history.add_ai_message(output)
+        print(output)
         return output
 
