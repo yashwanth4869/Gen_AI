@@ -1,14 +1,13 @@
 from langchain_community.utilities.sql_database import SQLDatabase
 from dotenv import load_dotenv
 from langchain.chains import create_sql_query_chain
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAI
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from operator import itemgetter
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 import os
-from langchain.memory import ChatMessageHistory
 from langchain import FewShotPromptTemplate
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder,FewShotChatMessagePromptTemplate,PromptTemplate
@@ -119,8 +118,9 @@ class SQLService:
         else:
             return query
 
-    def get_property_information(self, user_question: str):
-        
+    async def get_query_response(self, request):
+        data = await request.json()
+        user_question = data.get('user', None)
         # examples= [
         #     {
         #         "query" : "",
@@ -164,6 +164,6 @@ class SQLService:
         output = chain.invoke({"question": user_question, "messages" : self.history.messages})
         self.history.add_user_message(user_question)
         self.history.add_ai_message(output)
-        print(output)
+        # print(output)
         return output
 
