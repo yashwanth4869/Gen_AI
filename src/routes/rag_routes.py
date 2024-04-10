@@ -1,22 +1,11 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status,Header, Query,Request
-from fastapi.middleware.cors import CORSMiddleware
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores.faiss import FAISS
-from pypdf import PdfReader
-import faiss
-from langchain_community.document_loaders import PyPDFLoader
-import tiktoken
-from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
-import os
-from dotenv import load_dotenv
 import pathlib
 import aiofiles
 from fastapi import File, UploadFile
 from ..services.rag_services.rag_service import RagService
-from ..services.rag_services.rag_vector_db import rag_db, add_file_to_vector_store
+from ..services.rag_services.rag_vector_db import add_file_to_vector_store
 import uuid
 
 router = APIRouter()
@@ -39,7 +28,6 @@ async def upload_file(session_id, file: UploadFile = File(...)):
             contents = await file.read()  # Read the file contents
             await f.write(contents)  # Write the contents to the file
         file_path = f'uploads/{file.filename}'
-        
         await add_file_to_vector_store(file_path, session_id)
         
         return {
@@ -53,7 +41,6 @@ async def upload_file(session_id, file: UploadFile = File(...)):
 
 @router.post('/query/pdf/{filename:path}/{user_id}/{session_id}')
 async def query_pdf(filename: str, request: Request,session_id,user_id):
-    print(filename,'********************************')
     data = await request.json()
     user_query = data.get('user',None)
 
