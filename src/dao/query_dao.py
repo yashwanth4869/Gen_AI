@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src.models.qa_records import QARecords
-from src.mapper.query_mapper import map_query
+from src.utlis.query_mapper import map_query
 from fastapi import Response
 from sqlalchemy import func
 from fastapi.responses import JSONResponse
@@ -10,8 +10,8 @@ class QueryDAO:
     def __init__(self, db: Session):
         self.db = db        
     
-    async def add_record_to_db(self, user_id, query,session_id):
-        record = map_query(user_id, query,session_id)
+    async def add_record_to_db(self, user_id, query,session_id, service_type):
+        record = map_query(user_id, query, session_id, service_type)
         self.db.add(record)
         self.db.commit()
         self.db.refresh(record)

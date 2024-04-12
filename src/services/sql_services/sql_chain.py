@@ -1,6 +1,5 @@
 from langchain_community.utilities.sql_database import SQLDatabase
 from dotenv import load_dotenv
-from langchain.chains import create_sql_query_chain
 from langchain_openai import ChatOpenAI, OpenAI
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from operator import itemgetter
@@ -10,10 +9,12 @@ from langchain_core.prompts import PromptTemplate
 import os
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder,FewShotChatMessagePromptTemplate,PromptTemplate
-
+from sqlalchemy.orm import Session
+from src.dao.query_dao import QueryDAO
 
 class SQLService:
-    def __init__(self, session_id):
+    def __init__(self, session_id, db : Session):
+        self.query_dao = QueryDAO(db)
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.history = UpstashRedisChatMessageHistory(
@@ -83,17 +84,21 @@ class SQLService:
         else:
             return query
 
-    async def get_query_response(self, request, session_id):
+    async def get_query_response(self, request, user_id, session_id):
         data = await request.json()
-        user_question = data.get('user', None)
+        user_query = data.get('user', None)
         
         chain = (
             RunnablePassthrough.assign(query= self.generate_query | self.remove_sql_identifier).assign(
                 result=itemgetter("query") | self.execute_query
             ) | self.rephrase_answer
         )
-        output = chain.invoke({"question": user_question, "messages" : self.history.messages})
-        self.history.add_user_message(user_question)
+        task_id = await self.query_dao.add_record_to_db(user_id, user_query,session_id, 'SQLService')
+        await self.query_dao.update_status(task_id, 'Inprogress')
+        output = chain.invoke({"question": user_query, "messages" : self.history.messages})
+        await self.query_dao.update_answer_field(task_id, output)
+        await self.query_dao.update_status(task_id, 'Completed')
+        self.history.add_user_message(user_query)
         self.history.add_ai_message(output)
         return {'bot': output, 'session_id':session_id}
 
