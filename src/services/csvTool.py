@@ -2,7 +2,7 @@ from langchain.tools import BaseTool,StructuredTool, tool
 from langchain.agents.agent_types import AgentType
 from langchain.sql_database import SQLDatabase
 from langchain_experimental.sql import SQLDatabaseChain
-from src.config.database import engine
+from src.config.databaseConfig import engine
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain import OpenAI

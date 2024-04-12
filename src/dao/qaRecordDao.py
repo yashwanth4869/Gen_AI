@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from src.models.qa_records import QARecords
-from src.utlis.query_mapper import map_query
+from src.models.qaRecord import QARecords
+from src.utils.queryMapper import map_query
 from fastapi import Response
 from sqlalchemy import func
 from fastapi.responses import JSONResponse
@@ -32,12 +32,6 @@ class QueryDAO:
     async def fetch_session_chat(self, session_id):
 
         response_dictionary = {}
-        # if not session_id:
-        #     session_id = str(uuid.uuid4())
-        #     response_dictionary['session_id'] = session_id
-        #     response_dictionary['previous_chat'] = []
-        #     return response_dictionary
-
         previous_chat_questions = self.db.query(QARecords.Question).filter(QARecords.SessionId == session_id).all()
         previous_chat_answers = self.db.query(QARecords.Answer).filter(QARecords.SessionId == session_id).all()
         previous_chat = []

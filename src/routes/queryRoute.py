@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from src.services.qna_service.query_service import QueryService
-from src.config.database_initializer import get_db
+from src.services.qnaService.chatService import QueryService
+from src.utils.databaseInitializer import get_db
 
 router = APIRouter()
 

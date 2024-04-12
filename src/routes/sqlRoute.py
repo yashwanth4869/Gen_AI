@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request,FastAPI
 from sqlalchemy.orm import Session
-from src.config.database_initializer import get_db
-from src.services.sql_services.sql_chain import SQLService
+from src.utils.databaseInitializer import get_db
+from src.services.sqlService.sqlChain import SQLService
 
 
 router = APIRouter()

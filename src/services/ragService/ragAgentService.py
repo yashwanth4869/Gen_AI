@@ -9,16 +9,16 @@ from langchain.agents.agent_types import AgentType
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
 import os
-from src.services.rag_services.rag_vector_db import rag_db
-from src.services.rag_services.rag_custom_tool import RagCustomTool
+from src.services.ragService.ragVectorDBService import rag_db
+from src.services.ragService.ragCustomTool import RagCustomTool
 import uuid
-from src.dao.query_dao import QueryDAO
+from src.dao.qaRecordDao import QueryDAO
 from sqlalchemy.orm import Session
 
  
 class RagService:
     def __init__(self, db: Session):
-        self.query_dao = QueryDAO(db)
+        self.qa_record_dao = QueryDAO(db)
  
     async def rag_response(self, user_query, user_id, session_id,filename):
         load_dotenv()
@@ -83,9 +83,9 @@ class RagService:
             memory=memory,
         )
 
-        task_id = await self.query_dao.add_record_to_db(user_id, user_query,session_id, 'RAGService')
-        await self.query_dao.update_status(task_id, 'Inprogress')
+        task_id = await self.qa_record_dao.add_record_to_db(user_id, user_query,session_id, 'RAGService')
+        await self.qa_record_dao.update_status(task_id, 'Inprogress')
         output=conversational_agent.run(input=user_query)
-        await self.query_dao.update_answer_field(task_id, output)
-        await self.query_dao.update_status(task_id, 'Completed')
+        await self.qa_record_dao.update_answer_field(task_id, output)
+        await self.qa_record_dao.update_status(task_id, 'Completed')
         return {"bot":output,"session_id": session_id}

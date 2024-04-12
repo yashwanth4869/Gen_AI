@@ -1,5 +1,5 @@
 from sqlalchemy import  Column, Integer, String, Text, TIMESTAMP, ForeignKey, Enum
-from src.config.database import base
+from src.config.databaseConfig import base
 from sqlalchemy.sql import func
 
 class QARecords(base):
