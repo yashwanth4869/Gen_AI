@@ -1,4 +1,4 @@
-from src.models.qa_records import QARecords
+from src.models.qaRecord import QARecords
 
 def map_query(user_id, user_query,session_id, service_type):
     return QARecords(

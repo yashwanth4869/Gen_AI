@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request,File, UploadFile
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
-from src.services.user_services.user_service import UserService
-from src.config.database_initializer import get_db
+from src.services.userService.userChatService import UserService
+from src.utils.databaseInitializer import get_db
 from fastapi import FastAPI, File, UploadFile
 import shutil
 import os

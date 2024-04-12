@@ -2,14 +2,14 @@ from fastapi import FastAPI, APIRouter, HTTPException, Depends, status,Header, Q
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
 from sqlalchemy.orm import Session
-from src.config.database_initializer import get_db
+from src.utils.databaseInitializer import get_db
 import pathlib
 import aiofiles
 from fastapi import File, UploadFile
-from ..services.rag_services.rag_service import RagService
-from ..services.rag_services.rag_vector_db import add_file_to_vector_store
+from src.services.ragService.ragAgentService import RagService
+from src.services.ragService.ragVectorDBService import add_file_to_vector_store
 import uuid, os
-from src.config.rag_tool_db_config import create_faiss_db_directory, create_uploads_directory
+from src.utils.vectorDBInitializer import create_faiss_db_directory, create_uploads_directory
 
 router = APIRouter()
 

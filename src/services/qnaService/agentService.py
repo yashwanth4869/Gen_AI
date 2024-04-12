@@ -8,7 +8,7 @@ from langchain import hub
 from langchain.agents import initialize_agent, Tool, load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.agents.agent_types import AgentType
-from src.dao.user_dao import UserDAO
+from src.dao.userDao import UserDAO
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from dotenv import load_dotenv
 import os

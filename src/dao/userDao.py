@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from src.models.qa_records import QARecords
+from src.models.qaRecord import QARecords
 from fastapi import Response
 from sqlalchemy import func
 from fastapi.responses import JSONResponse

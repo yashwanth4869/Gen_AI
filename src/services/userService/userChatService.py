@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from src.dao.user_dao import UserDAO
+from src.dao.userDao import UserDAO
 from fastapi import HTTPException, Response
 from fastapi.responses import JSONResponse
 

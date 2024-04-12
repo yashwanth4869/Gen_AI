@@ -7,14 +7,15 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 import os
+from langchain.chains import create_sql_query_chain
 from langchain_community.chat_message_histories.upstash_redis import UpstashRedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder,FewShotChatMessagePromptTemplate,PromptTemplate
 from sqlalchemy.orm import Session
-from src.dao.query_dao import QueryDAO
+from src.dao.qaRecordDao import QueryDAO
 
 class SQLService:
     def __init__(self, session_id, db : Session):
-        self.query_dao = QueryDAO(db)
+        self.qa_record_dao = QueryDAO(db)
         load_dotenv()
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.history = UpstashRedisChatMessageHistory(
@@ -93,11 +94,14 @@ class SQLService:
                 result=itemgetter("query") | self.execute_query
             ) | self.rephrase_answer
         )
-        task_id = await self.query_dao.add_record_to_db(user_id, user_query,session_id, 'SQLService')
-        await self.query_dao.update_status(task_id, 'Inprogress')
-        output = chain.invoke({"question": user_query, "messages" : self.history.messages})
-        await self.query_dao.update_answer_field(task_id, output)
-        await self.query_dao.update_status(task_id, 'Completed')
+        task_id = await self.qa_record_dao.add_record_to_db(user_id, user_query,session_id, 'SQLService')
+        await self.qa_record_dao.update_status(task_id, 'Inprogress')
+        output = chain.invoke({"question": user_query, "messages" : self.history.messages}) 
+        final_output_index = output.find('Rephrased Answer:')
+        output = output[:final_output_index]
+        print(output)
+        await self.qa_record_dao.update_answer_field(task_id, output)
+        await self.qa_record_dao.update_status(task_id, 'Completed')
         self.history.add_user_message(user_query)
         self.history.add_ai_message(output)
         return {'bot': output, 'session_id':session_id}
