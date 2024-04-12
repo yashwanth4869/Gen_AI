@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from src.services.query_service import QueryService
+from src.services.qna_service.query_service import QueryService
 from src.config.database_initializer import get_db
 
 router = APIRouter()

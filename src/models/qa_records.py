@@ -9,6 +9,7 @@ class QARecords(base):
     SessionId = Column(Text,nullable=True)
     Question = Column(Text, nullable=False)
     Answer = Column(Text)
-    Status = Column(Enum('Pending', 'Inprogress', 'Completed', 'Failed'))
+    Status = Column(Enum('Pending', 'Inprogress', 'Completed', 'Failed'), default = 'Pending')
     CreatedAt = Column(TIMESTAMP, server_default=func.now(), nullable=False)
     UpdatedAt = Column(TIMESTAMP)
+    ServiceType = Column(Enum('RAGService', 'SQLService', 'QNAService'))
