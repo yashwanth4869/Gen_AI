@@ -1,3 +1,4 @@
+[04:30 pm] Yeshwanth Papishetty
 from langchain_community.utilities.sql_database import SQLDatabase
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAI
@@ -12,7 +13,8 @@ from langchain_community.chat_message_histories.upstash_redis import UpstashRedi
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder,FewShotChatMessagePromptTemplate,PromptTemplate
 from sqlalchemy.orm import Session
 from src.dao.qaRecordDao import QueryDAO
-
+from src.services.sqlService.excelService import text_to_excel
+ 
 class SQLService:
     def __init__(self, session_id, db : Session):
         self.qa_record_dao = QueryDAO(db)
@@ -26,7 +28,7 @@ class SQLService:
         self.uri_key = os.getenv("SAMPLE_DB_URL")
         self.db = SQLDatabase.from_uri(self.uri_key)
         self.llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, openai_api_key=self.api_key)
-
+ 
         self.examples= [
             {
                 "input" : "Total recognized revenue for each project",
@@ -41,8 +43,8 @@ class SQLService:
                 "query" : "SELECT yearmonth, SUM(recognized_revenue) AS total_recognized_revenue, SUM(recognized_cost) AS total_recognized_cost FROM osi_rev_rec_tabx GROUP BY yearmonth;"
             }
         ]
-
-
+ 
+ 
         self.example_prompt = ChatPromptTemplate.from_messages(
             [
                 ("human", "{input}\nSQLQuery:"),
@@ -54,7 +56,7 @@ class SQLService:
             examples=self.examples,
             input_variables=["input","top_k"],
         )
-
+ 
         self.final_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", "You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run. Unless otherwise specificed.\n\nHere is the relevant table info: {table_info}\n\nBelow are a number of examples of questions and their corresponding SQL queries."),
@@ -63,7 +65,7 @@ class SQLService:
                 ("human", "{input}"),
             ]
         )
-
+ 
         self.generate_query = create_sql_query_chain(self.llm, self.db, self.final_prompt)
         self.execute_query = QuerySQLDataBaseTool(db=self.db)
         self.answer_prompt = PromptTemplate.from_template("""
@@ -71,10 +73,10 @@ class SQLService:
             Question: {question},
             SQL Query: {query},
             SQL Result: {result}
-            Answer: 
+            Answer:
         """)
         self.rephrase_answer = self.answer_prompt | self.llm | StrOutputParser()
-
+ 
     def remove_sql_identifier(self,query:str):
         query = query.strip()
         print("query", query)
@@ -84,11 +86,11 @@ class SQLService:
             return query[newline_index:last_newline_index]
         else:
             return query
-
+ 
     async def get_query_response(self, request, user_id, session_id):
         data = await request.json()
         user_query = data.get('user', None)
-        
+       
         chain = (
             RunnablePassthrough.assign(query= self.generate_query | self.remove_sql_identifier).assign(
                 result=itemgetter("query") | self.execute_query
@@ -96,13 +98,16 @@ class SQLService:
         )
         task_id = await self.qa_record_dao.add_record_to_db(user_id, user_query,session_id, 'SQLService')
         await self.qa_record_dao.update_status(task_id, 'Inprogress')
-        output = chain.invoke({"question": user_query, "messages" : self.history.messages}) 
+        output = chain.invoke({"question": user_query, "messages" : self.history.messages})
         final_output_index = output.find('Rephrased Answer:')
         output = output[:final_output_index]
-        print(output)
+        # print(output)
+
         await self.qa_record_dao.update_answer_field(task_id, output)
         await self.qa_record_dao.update_status(task_id, 'Completed')
+        await text_to_excel(output)
         self.history.add_user_message(user_query)
         self.history.add_ai_message(output)
         return {'bot': output, 'session_id':session_id}
-
+ 
+ 
